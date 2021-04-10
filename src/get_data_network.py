@@ -1,9 +1,9 @@
-# import networkx as nx
+import networkx as nx
 import requests
 import pandas as pd
-# import numpy as np
-# import matplotlib.pyplot as plt
-# from matplotlib import cm
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import cm
 
 
 ### requesting data via network
@@ -23,7 +23,23 @@ df = pd.DataFrame(data[1:-1], columns = data[0])
 interactions = df[['preferredName_A', 'preferredName_B', 'score']]  
 
 # printing out daaframe
-print(interactions)
-print(interactions[interactions['preferredName_A'] == 'TPH1'])
+# print(interactions)
+# print(interactions[interactions['preferredName_A'] == 'TPH1'])
 
-print(interactions.size)
+# print(interactions.size)
+
+
+G=nx.Graph(name='Protein Interaction Graph')
+interactions = np.array(interactions)
+for i in range(len(interactions)):
+    interaction = interactions[i]
+    a = interaction[0] # protein a node
+    b = interaction[1] # protein b node
+    w = float(interaction[2]) # score as weighted edge where high scores = low weight
+    G.add_weighted_edges_from([(a,b,w)]) # add weighted edge to graph
+
+pos = nx.spring_layout(G) # position the nodes using the spring layout
+plt.figure(figsize=(11,11),facecolor=[0.7,0.7,0.7,0.4])
+nx.draw_networkx(G)
+plt.axis('off')
+plt.show()
