@@ -1,5 +1,5 @@
 # Goal: parse individual graph into adjacency matrix and set of vertices
-# This works for protein names as well as scores
+# This works for protein names as well as scores 
 # Resrouce: https://github.com/joeyajames/Python/blob/master/graph_adjacency-matrix.py 
 # Vertex class to store all vertices 
 class Vertex:
