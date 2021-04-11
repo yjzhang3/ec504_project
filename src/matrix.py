@@ -1,7 +1,9 @@
 import numpy as np
+a = 0.44 # between 0 and 1, a parameter that controls the balance between biological and topological score
+b = 0.79 # not defined in the article?
 
 def align(graph1, graph2, a, b, c):
-    sim_score = similarit_score(graph1, graph2, a, b)
+    sim_score = similarity_score(graph1, graph2, a, b)
     P = 0
     C1 = 0
     L = []
@@ -29,9 +31,48 @@ def topological_score(graph1, graph2):
         T = T_prime
     return T
 
-def biologica_score(graph1, graph2, b):
+def biological_score(graph1, graph2, b):
+    # num_node_1 = no. of vertex in graph1
+    # num_node_2 = no. of vertex in graph2
+    C = np.zeros((num_node_1,num_node_2)) # not sure how to compute this?
+    # should be num_node_1*num_node_2 matrix
+    # temporarily initialize as empty
+
+    B = C
+    B_prime = np.full_like(B, 1) # create an array with the same dimension as B but filled with 1 for now
     
+    
+    max_round = 100 #tunable
+    for t in range(1,max_round):
+    	for i in range(1,num_node_1): # assume each node has ID and I'm calling every one of them
+    		for j in range(1,num_node_2):
+    			s = ComputeScore(graph1,graph2,i,j,B) # does this give a single number?
+    			B_prime[i,j] = b*C[i,j] + (1-b)*s
+    				
+    	B = B_prime
+    
+    return B # typo in the PDF? It said T
 
 
 
 def similarity_score(graph1, graph2, a, b):
+    # num_node_1 = no. of vertex in graph1
+    # num_node_2 = no. of vertex in graph2
+	S = np.zeros((num_node_1,num_node_2))
+	# Similarity score matrix S with forumla rows and forumla columns, indicates the similarity between nodes of two networks
+	
+	T = topological_score(graph1,graph2)
+	B = biological_score(graph1,graph2)
+    	# both T and B are matrices
+    	
+    	
+    	# how to iterate through every vertex in graphs?
+    	# could we have adjacency list for this implemention (use linked list but not necessarily easier)
+    	
+
+    	for i in range(1,num_node_1): # assume each node has ID and I'm calling every one of them
+    		for j in range(1,num_node_2):
+    		 	S[i,j] = a*T[i,j] + (1-a)B[i,j]
+    	
+    	return S
+    	
