@@ -1,5 +1,5 @@
 # Goal: parse individual graph into adjacency list and set of vertices
-# This only works for number not names
+# This only works for number not names 
 def add_vertex(v):
     global graph
     global vertices_list
