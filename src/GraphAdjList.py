@@ -1,5 +1,5 @@
 # Goal: parse individual graph into adjacency list and set of vertices
-# This only works for number not names 
+# This only works for number not names
 def add_vertex(v):
     global graph
     global vertices_list
@@ -28,10 +28,12 @@ def add_edge(v_start, v_end, score):
         graph[v_start].append(temp)
 
 def print_graph():
+    # print adj list into a text file as output
+    sample = open('AdjListOutput.txt', 'w')
     global graph
     for vertex in graph:
         for edges in graph[vertex]:
-            print (vertex, " -> ", edges[0], " edge weight: ", edges[1])
+            print (vertex, " -> ", edges[0], " edge weight: ", edges[1], file = sample)
 
 
 
@@ -41,20 +43,28 @@ graph = {}
 # Store vertices in vertices_list
 vertices_list = 0
 
-# Generalized vertex set, can replace with any protein names
-add_vertex(1)
-add_vertex(2)
-add_vertex(3)
-add_vertex(4)
+# Reading into the protein file that can be obtained from string-db.org
+# The following example is Homo Sapiens: https://string-db.org/cgi/download?sessionId=%24input-%3E%7BsessionId%7D&species_text=Homo+sapiens
+fileget = open ('9606.protein.links.v11.0.txt', 'r')
+next(fileget) # ignoring the first line of input
+count = 0
 
-# Add score between vertcies by specifying
-# Start vertex, End vertex, Score <--- Fromat
+protein_map = {} # a map that maps protein id to numbers
 
-add_edge(1, 2, 1)
-add_edge(1, 3, 1)
-add_edge(2, 3, 3)
-add_edge(3, 4, 4)
-add_edge(4, 1, 5)
+for line in fileget:
+    # Add score between vertcies by specifying
+    # Start vertex, End vertex, Score <--- Fromat
+    protein1, protein2, score = line.strip().split()
+    if (protein1 not in protein_map):
+        # Making sure the map has unique proteins, no repetitive
+        protein_map[protein1] = count
+        add_vertex(count)
+        count += 1
+    if (protein2 not in protein_map):
+        # Making sure the map has unique proteins, no repetitive
+        protein_map[protein2] = count
+        add_vertex(count)
+        count += 1
+    # Add each edge into graph for adj list
+    add_edge(protein_map[protein1], protein_map[protein2], score)
 print_graph()
-print("Internal representation: ", graph)
-print("vertices: ", vertices_list)
