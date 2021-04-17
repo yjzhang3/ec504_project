@@ -10,10 +10,28 @@ def align(graph1, graph2, a, b, c):
     # To do
 
 def compute_score(graph1, graph2, i ,j , M):
-    A = []
+    
     s = 0
-    for node in neighbor(i):
-        node_prime = 
+
+    neighbor_i = graph1.adjacency[i] # list of i_prime
+    neighbor_j = graph2.adjacency[j] # list of j_prime
+    temp = []
+    for i_prime in neighbor_i:
+        # get all edges from i_prime to j_prime
+        weight_list = [M[i_prime][j_prime] for j_prime in neighbor_j]
+        neighbor_list = [(M[i_prime][j_prime], j_prime) for j_prime in neighbor_j]
+
+        # find index of max edge
+        max_weight = max(weight_list)
+        index = weight_list.index(max_weight)
+        j_dprime = neighbor_list[index].second
+        
+        # we won't consider any j_prime we already put as result
+        neighbor_j.remove(j_dprime)
+        # sum the max weight
+        s = s + max_weight
+
+    return s/(max(len(neighbor_i),len(neighbor_j)))
 
 # done
 def topological_score(graph1, graph2):
