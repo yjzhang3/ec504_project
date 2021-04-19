@@ -1,13 +1,62 @@
 import numpy as np
-a = 0.44 # between 0 and 1, a parameter that controls the balance between biological and topological score
-b = 0.79 # not defined in the article?
 
-def align(graph1, graph2, a, b, c):
+
+def align(graph1, graph2, a, b, lamb_da):
     sim_score = similarity_score(graph1, graph2, a, b)
     P = 0
     C1 = 0
-    L = []
-    # To do
+    L_inverse = [i for i in range]
+
+    # vertices list of graph1 and graph2
+    V1 = graph1.vertex
+    V2 = graph2.vertex
+    # size of V1 and V2
+    n_v1 = len(V1)
+    n_v2 = len(V2)
+
+    # initialize matrix I and A
+    I = np.zeros((n_v1, n_v2))
+    A = np.zeros((n_v1, n_v2))
+
+    P = 0
+    # 1-d matrix
+    C1 = np.zeros(n_v1)
+    C1 = np.zeros(n_v2)
+
+    # this is all i-j pair minus L
+    L_inverse = [(i,j) for i in range(n_v1) for j in range(n_v2)]
+    # the output
+    Al = {}
+    
+    
+    for i in V1:
+        for j in V2:
+            
+            neighbor_i = graph1.adjacency[i]
+            neighbor_j = graph1.adjacency[j]
+
+            temp = [1/len(graph1.adjacency[i_prime]) for i_prime in neighbor_i]
+            temp2 = [1/len(graph2.adjacency[j_prime]) for j_prime in neighbor_j]
+
+            temp3 = [len(graph1.adjacency[i_prime]) for i_prime in neighbor_i]
+            temp4 = [len(graph2.adjacency[j_prime]) for j_prime in neighbor_j]
+
+            I[i][j] = min(temp, temp2)/max(temp3, temp4)
+            A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
+
+    for n in V1:
+
+        A_list = [A[i][j] for i,j in L_inverse]
+        max_A = max(A_list)
+        index = A_list.index(max_A)
+        i_prime = index // n_v2
+        j_prime = index % n_v2
+
+        Al[i] = j
+        L = L.remove((i_prime, j_prime))
+
+
+    
 
 def compute_score(graph1, graph2, i ,j , M):
     
