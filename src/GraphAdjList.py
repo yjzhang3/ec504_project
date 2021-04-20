@@ -3,14 +3,42 @@ import requests
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
 from matplotlib import cm
-################################################ Instructions ################################################
+# All rights reserved Mandy Yao, Yujia Zhang, Ronnakon Rattanakornphan, Haoming Yi
+# Reference from and modified to: https://www.educative.io/edpresso/how-to-implement-a-graph-in-python
+
+################################################ Instructions ##################################################
 # Goal: parse individual graph into adjacency list and set of vertices
 # 1) Download TWO input data from http://string-db.org, save to local directory with this program
-# 2) Change line fileget_1 = open ('test1.txt', 'r') and fileget_2 = open ('test2.txt', 'r') to name of input data downloaded
+# 2) Command line in terminal: "python3 GraphAdjList.py text1.txt text2.txt"
 # 3) Run the program, you will see printed out adj list for both of them in the files of AdjListOutput1.txt and AdjListOutput2.txt
-# 4) To parse into the actual adj list, look at print functions: graph1 is your first adj list and graph2 is your second adj list
-############################################ End of Instructions ################################################
+# 4) To parse into the actual adj list, look at instructions below
+############################################ End of Instructions ###############################################
+
+################################ Instructions on how to get specific elements ##################################
+
+# graph1 is for text1.txt
+# graph2 is for text2.txt
+
+# Example
+# 1) To get the number of vertcies ----> print(len(graph1))
+# 2) To get the list of all nodes to its neighbors ----> print(graph1)
+# 3) To get node's neighbors and scores ----> print(graph1[#])
+# 4) To get only neighbors --->
+# CODE BEGIN
+# for edges in graph1[#]:
+#   print(edges[0])
+# CODE END
+# 5) To get only scores --->
+# CODE BEGIN
+# for scores in graph1[#]:
+#   print(scores[1])
+# CODE END
+
+######################################## End of instructions ##################################################
+
+
 def add_vertex1(v):
     global graph1
     global vertices_list
@@ -24,11 +52,9 @@ def add_edge1(v_start, v_end, score):
     global graph1
     # Validation of start vertex
     if v_start not in graph1:
-        print("here1")
         print("Vertex ", v_start, "does not exist.")
     # Validation of end vertex
     elif v_end not in graph1:
-        print("here2")
         print("Vertex ", v_end, " does not exist.")
     # Validated start and end vertices
     # Since this code is not restricted to a directed or 
@@ -87,19 +113,19 @@ def print_graph2():
             print (vertex, " -> ", edges[0], " edge weight: ", edges[1], file = sample)
 
 
-
 # Main driver code
+if len(sys.argv) != 3: #check input arguments to be two text files
+    sys.exit("Input arguments must be two text files")
+
+# Reading into the first protein file that can be obtained from string-db.org
+fileget_1 = open (sys.argv[1], 'r')
+next(fileget_1) # ignoring the first line of input
+count = 0
+protein_map1 = {} # a map that maps protein id to numbers
 graph1 = {}
 
 # Store vertices in vertices_list
 vertices_list = 0
-
-# Reading into the first protein file that can be obtained from string-db.org
-fileget_1 = open ('test.txt', 'r')
-next(fileget_1) # ignoring the first line of input
-count = 0
-protein_map1 = {} # a map that maps protein id to numbers
-
 ################################################ Visual- please ignore ################################################
 
 #G = nx.Graph(name='Protein Interaction Graph') 
@@ -133,6 +159,9 @@ print_graph1()
 # plt.show()
 ################################################ Visual- please ignore ################################################
 
+# Reading into the second protein file that can be obtained from string-db.org
+fileget_2 = open (sys.argv[2], 'r')
+next(fileget_2) # ignoring the first line of input
 
 # Clear global variables
 # Main driver code
@@ -142,10 +171,6 @@ graph2 = {}
 vertices_list = 0
 
 protein_map2 = {} # a map that maps protein id to numbers
-
-# Reading into the second protein file that can be obtained from string-db.org
-fileget_2 = open ('test1.txt', 'r')
-next(fileget_2) # ignoring the first line of input
 
 for each in fileget_2:
     proteinA, proteinB, score_2 = each.strip().split()
