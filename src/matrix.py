@@ -55,6 +55,20 @@ def align(graph1, graph2, a, b, lamb_da):
         Al[i] = j
         L = L.remove((i_prime, j_prime))
 
+        # start of Haoming's
+        for i_p in graph1.adjacency[i]:
+            C1[i_p] = C1[i_p] + 1/len(graph1.adjacency[i])
+        
+        for j_p in graph2.adjacency[j]:
+            C2[j_p] = C2[j_p] + 1/len(graph2.adjacency[j])
+        
+        D = [[0] * len(graph1.adjacency[i])] * len(graph2.adjacency[j])
+        for i_p in graph1.adjacency[i]:
+            for j_p in graph2.adjacency[j]:
+                D[i_p][j_p] = D[i_p][j_p] + 1
+        # end of Haoming's
+        # question: where did 'i' and 'j' come from?
+
 
     
 
