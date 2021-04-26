@@ -9,6 +9,8 @@ def align(graph1, graph2, a, b, lamb_da):
     # vertices list of graph1 and graph2
     V1 = graph1['vertex']
     V2 = graph2['vertex']
+    print('V1 = ', V1)
+    print('V2 = ', V2)
     # size of V1 and V2
     n_v1 = graph1['max_id'] + 1
     n_v2 = graph2['max_id'] + 1
@@ -28,7 +30,7 @@ def align(graph1, graph2, a, b, lamb_da):
     # the output
     Al = {}
     
-    
+    print("Align: calculating first matrix A")
     for i in V1:
         for j in V2:
             
@@ -46,6 +48,7 @@ def align(graph1, graph2, a, b, lamb_da):
             I[i][j] = min(sum(temp),sum(temp2))/max(temp3, temp4)
             A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
 
+    print("Align: done calculating first matrix A")
     for n in V1:
 
         A_list = [A[i][j] for i,j in L_inverse]
@@ -116,31 +119,39 @@ def align(graph1, graph2, a, b, lamb_da):
                 A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
 
 def compute_score(graph1, graph2, i ,j , M):
+
     
     s = 0
     neighbor_i = neighbors(graph1, i) # list of i_prime
     neighbor_j = neighbors(graph2, j) # list of j_prime
 
+    # print('neighbor_i', neighbor_i)
+    # print('neighbor_j', neighbor_j)
     temp = []
     for i_prime in neighbor_i:
         # get all edges from i_prime to j_prime
         weight_list = [M[i_prime][j_prime] for j_prime in neighbor_j]
         neighbor_list = [(M[i_prime][j_prime], j_prime) for j_prime in neighbor_j]
 
+        # print('len weight_list = ', len(weight_list))
+        # print(neighbor_list)
         # find index of max edge
         max_weight = max(weight_list)
         index = weight_list.index(max_weight)
-        j_dprime = neighbor_list[index].second
+        j_dprime = neighbor_list[index][1]
         
         # we won't consider any j_prime we already put as result
         neighbor_j.remove(j_dprime)
         # sum the max weight
         s = s + max_weight
+        if (len(neighbor_j) == 0):
+            break
 
     return s/(max(len(neighbor_i),len(neighbor_j)))
 
 # done
 def topological_score(graph1, graph2):
+    print('topological_score: start')
     # T = i x j matrix
     # i = no. of vertex in graph1
     # j = no. of vertex in graph2
@@ -163,6 +174,7 @@ def topological_score(graph1, graph2):
 
 def biological_score(graph1, graph2, b):
 
+    print('biological_score: start')
     n_v1 = graph1['max_id'] + 1
     n_v2 = graph2['max_id'] + 1
 
@@ -179,12 +191,12 @@ def biological_score(graph1, graph2, b):
     
     max_round = 100 #tunable
     for t in range(1,max_round):
-    	for i in V1:
+        for i in V1:
             for j in V2:
-    			s = ComputeScore(graph1,graph2,i,j,B) # does this give a single number?
-    			B_prime[i,j] = b*C[i,j] + (1-b)*s
-    				
-    	B = B_prime
+                s = ComputeScore(graph1,graph2,i,j,B) # does this give a single number?
+                B_prime[i,j] = b*C[i,j] + (1-b)*s
+                    
+        B = B_prime
     
     return B # typo in the PDF? It said T
 
@@ -196,22 +208,22 @@ def similarity_score(graph1, graph2, a, b):
     n_v1 = graph1['max_id'] + 1
     n_v2 = graph2['max_id'] + 1
 
-	S = np.zeros((n_v1, n_v2))
-	# Similarity score matrix S with forumla rows and forumla columns, indicates the similarity between nodes of two networks
-	
-	T = topological_score(graph1,graph2)
-	B = biological_score(graph1,graph2)
+    S = np.zeros((n_v1, n_v2))
+    # Similarity score matrix S with forumla rows and forumla columns, indicates the similarity between nodes of two networks
+    
+    T = topological_score(graph1,graph2)
+    B = biological_score(graph1,graph2)
     # both T and B are matrices
     
     
     # how to iterate through every vertex in graphs?
     # could we have adjacency list for this implemention (use linked list but not necessarily easier)
     V1 = graph1['vertex']
-    V2 = graph2['vertex']	
+    V2 = graph2['vertex']    
 
     for i in V1:
         for j in V2:
-            S[i,j] = a*T[i,j] + (1-a)B[i,j]
+            S[i,j] = a * T[i,j] + (1-a) * B[i,j]
     
     return S
-    	
+        

@@ -127,7 +127,8 @@ def neighbors(graph1, index):
 
 def make_graph(file_location1, file_location2):
 
-
+    print("Making graph: start")
+    print("Making graph: doing graph1")
     # Reading into the first protein file that can be obtained from string-db.org
     fileget_1 = open (file_location1, 'r')
     next(fileget_1) # ignoring the first line of input
@@ -155,6 +156,7 @@ def make_graph(file_location1, file_location2):
         # Add each edge into graph for adj list
         add_edge(graph1, protein_map1[protein1], protein_map1[protein2], score)
 
+    print("Making graph: doing graph2")
     # Reading into the second protein file that can be obtained from string-db.org
     fileget_2 = open (file_location2, 'r')
     next(fileget_2) # ignoring the first line of input
@@ -162,6 +164,7 @@ def make_graph(file_location1, file_location2):
     # Clear global variables
     # Main driver code
     graph2 = {}
+    graph2['vertex'] = []
 
     # Store vertices in vertices_list
     vertices_list = 0
