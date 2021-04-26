@@ -39,17 +39,18 @@ from matplotlib import cm
 ######################################## End of instructions ##################################################
 
 
-def add_vertex1(v):
-    global graph1
-    global vertices_list
+def add_vertex(graph1, v):
+    # global graph1
+    # global vertices_list
     if v in graph1:
         print("Vertex ", v, " already exists.")
     else:
-        vertices_list = vertices_list + 1
+        # vertices_list = vertices_list + 1
         graph1[v] = []
+        graph1['vertex'].append(v)
 
-def add_edge1(v_start, v_end, score):
-    global graph1
+def add_edge(graph1, v_start, v_end, score):
+    # global graph1
     # Validation of start vertex
     if v_start not in graph1:
         print("Vertex ", v_start, "does not exist.")
@@ -112,88 +113,171 @@ def print_graph2():
         for edges in graph2[vertex]:
             print (vertex, " -> ", edges[0], " edge weight: ", edges[1], file = sample)
 
+def test_func_2():
+    print("hello")
 
-# Main driver code
-if len(sys.argv) != 3: #check input arguments to be two text files
-    sys.exit("Input arguments must be two text files")
+def neighbors(graph1, index):
+    neighbors_list = []
+    for edges in graph1[index]:
+        neighbors_list.append(edges[0])
+        
 
-# Reading into the first protein file that can be obtained from string-db.org
-fileget_1 = open (sys.argv[1], 'r')
-next(fileget_1) # ignoring the first line of input
-count = 0
-protein_map1 = {} # a map that maps protein id to numbers
-graph1 = {}
+    return neighbors_list
 
-# Store vertices in vertices_list
-vertices_list = 0
-################################################ Visual- please ignore ################################################
 
-#G = nx.Graph(name='Protein Interaction Graph') 
-################################################ Visual- please ignore ################################################
+def make_graph(file_location1, file_location2):
 
-for line in fileget_1:
-    # Add score between vertcies by specifying
-    # Start vertex, End vertex, Score <--- Fromat
-    protein1, protein2, score = line.strip().split()
-    if (protein1 not in protein_map1):
-        # Making sure the map has unique proteins, no repetitive
-        protein_map1[protein1] = count
-        add_vertex1(count)
-        count += 1
-    if (protein2 not in protein_map1):
-        # Making sure the map has unique proteins, no repetitive
-        protein_map1[protein2] = count
-        add_vertex1(count)
-        count += 1
-    # Add each edge into graph for adj list
-    add_edge1(protein_map1[protein1], protein_map1[protein2], score)
-################################################ Visual- please ignore ################################################
-    # G.add_edge(protein_map1[protein1],protein_map1[protein2], weight=score) # 
-################################################ Visual- please ignore ################################################
-print_graph1()
-################################################ Visual- please ignore ################################################
-# pos = nx.spring_layout(G)
-# plt.figure(figsize=(11,11),facecolor=[0.7,0.7,0.7,0.4])
-# nx.draw_networkx(G)
-# plt.axis('off')
-# plt.show()
-################################################ Visual- please ignore ################################################
 
-# Reading into the second protein file that can be obtained from string-db.org
-fileget_2 = open (sys.argv[2], 'r')
-next(fileget_2) # ignoring the first line of input
+    # Reading into the first protein file that can be obtained from string-db.org
+    fileget_1 = open (file_location1, 'r')
+    next(fileget_1) # ignoring the first line of input
+    count = 0
+    protein_map1 = {} # a map that maps protein id to numbers
+    graph1 = {}
+    graph1['vertex'] = []
 
-# Clear global variables
-# Main driver code
-graph2 = {}
-
-# Store vertices in vertices_list
-vertices_list = 0
-
-protein_map2 = {} # a map that maps protein id to numbers
-
-for each in fileget_2:
-    proteinA, proteinB, score_2 = each.strip().split()
-    # protein not already exist, create vertex 
-    if (proteinA not in protein_map2):
-        # Making sure the map has unique proteins, no repetitive
-        if (proteinA in protein_map1): 
-            num = protein_map1[proteinA]
-            protein_map2[proteinA] = num
-            add_vertex2(num)
-        else:
-            add_vertex2(count)
-            protein_map2[proteinA] = count
+    
+    for line in fileget_1:
+        # Add score between vertcies by specifying
+        # Start vertex, End vertex, Score <--- Fromat
+        protein1, protein2, score = line.strip().split()
+        if (protein1 not in protein_map1):
+            # Making sure the map has unique proteins, no repetitive
+            protein_map1[protein1] = count
+            add_vertex(graph1, count)
             count += 1
-    if (proteinB not in protein_map2):
-        # Making sure the map has unique proteins, no repetitive
-        if (proteinB in protein_map1):
-            num = protein_map1[proteinB]
-            protein_map2[proteinB] = num
-            add_vertex2(num)
-        else:
-            add_vertex2(count)
-            protein_map2[proteinB] = count
+        if (protein2 not in protein_map1):
+            # Making sure the map has unique proteins, no repetitive
+            protein_map1[protein2] = count
+            add_vertex(graph1, count)
             count += 1
-    add_edge2(protein_map2[proteinA], protein_map2[proteinB], score_2)
-print_graph2() # print the second adj list
+        # Add each edge into graph for adj list
+        add_edge(graph1, protein_map1[protein1], protein_map1[protein2], score)
+
+    # Reading into the second protein file that can be obtained from string-db.org
+    fileget_2 = open (file_location2, 'r')
+    next(fileget_2) # ignoring the first line of input
+
+    # Clear global variables
+    # Main driver code
+    graph2 = {}
+
+    # Store vertices in vertices_list
+    vertices_list = 0
+
+    protein_map2 = {} # a map that maps protein id to numbers
+
+    for each in fileget_2:
+        proteinA, proteinB, score_2 = each.strip().split()
+        # protein not already exist, create vertex 
+        if (proteinA not in protein_map2):
+            # Making sure the map has unique proteins, no repetitive
+            if (proteinA in protein_map1): 
+                num = protein_map1[proteinA]
+                protein_map2[proteinA] = num
+                add_vertex(graph2, num)
+            else:
+                add_vertex(graph2, count)
+                protein_map2[proteinA] = count
+                count += 1
+        if (proteinB not in protein_map2):
+            # Making sure the map has unique proteins, no repetitive
+            if (proteinB in protein_map1):
+                num = protein_map1[proteinB]
+                protein_map2[proteinB] = num
+                add_vertex(graph2, num)
+            else:
+                add_vertex(graph2, count)
+                protein_map2[proteinB] = count
+                count += 1
+        add_edge(graph2, protein_map2[proteinA], protein_map2[proteinB], score_2)
+
+
+    return graph1, graph2
+
+if __name__ == "__main__":
+
+    # Main driver code
+    if len(sys.argv) != 3: #check input arguments to be two text files
+        sys.exit("Input arguments must be two text files")
+
+    # Reading into the first protein file that can be obtained from string-db.org
+    fileget_1 = open (sys.argv[1], 'r')
+    next(fileget_1) # ignoring the first line of input
+    count = 0
+    protein_map1 = {} # a map that maps protein id to numbers
+    graph1 = {}
+
+    # Store vertices in vertices_list
+    vertices_list = 0
+    ################################################ Visual- please ignore ################################################
+
+    #G = nx.Graph(name='Protein Interaction Graph') 
+    ################################################ Visual- please ignore ################################################
+
+    for line in fileget_1:
+        # Add score between vertcies by specifying
+        # Start vertex, End vertex, Score <--- Fromat
+        protein1, protein2, score = line.strip().split()
+        if (protein1 not in protein_map1):
+            # Making sure the map has unique proteins, no repetitive
+            protein_map1[protein1] = count
+            add_vertex1(count)
+            count += 1
+        if (protein2 not in protein_map1):
+            # Making sure the map has unique proteins, no repetitive
+            protein_map1[protein2] = count
+            add_vertex1(count)
+            count += 1
+        # Add each edge into graph for adj list
+        add_edge1(protein_map1[protein1], protein_map1[protein2], score)
+    ################################################ Visual- please ignore ################################################
+        # G.add_edge(protein_map1[protein1],protein_map1[protein2], weight=score) # 
+    ################################################ Visual- please ignore ################################################
+    print_graph1()
+    ################################################ Visual- please ignore ################################################
+    # pos = nx.spring_layout(G)
+    # plt.figure(figsize=(11,11),facecolor=[0.7,0.7,0.7,0.4])
+    # nx.draw_networkx(G)
+    # plt.axis('off')
+    # plt.show()
+    ################################################ Visual- please ignore ################################################
+
+    # Reading into the second protein file that can be obtained from string-db.org
+    fileget_2 = open (sys.argv[2], 'r')
+    next(fileget_2) # ignoring the first line of input
+
+    # Clear global variables
+    # Main driver code
+    graph2 = {}
+
+    # Store vertices in vertices_list
+    vertices_list = 0
+
+    protein_map2 = {} # a map that maps protein id to numbers
+
+    for each in fileget_2:
+        proteinA, proteinB, score_2 = each.strip().split()
+        # protein not already exist, create vertex 
+        if (proteinA not in protein_map2):
+            # Making sure the map has unique proteins, no repetitive
+            if (proteinA in protein_map1): 
+                num = protein_map1[proteinA]
+                protein_map2[proteinA] = num
+                add_vertex2(num)
+            else:
+                add_vertex2(count)
+                protein_map2[proteinA] = count
+                count += 1
+        if (proteinB not in protein_map2):
+            # Making sure the map has unique proteins, no repetitive
+            if (proteinB in protein_map1):
+                num = protein_map1[proteinB]
+                protein_map2[proteinB] = num
+                add_vertex2(num)
+            else:
+                add_vertex2(count)
+                protein_map2[proteinB] = count
+                count += 1
+        add_edge2(protein_map2[proteinA], protein_map2[proteinB], score_2)
+    print_graph2() # print the second adj list

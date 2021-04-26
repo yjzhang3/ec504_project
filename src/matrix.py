@@ -1,15 +1,14 @@
 import numpy as np
+from GraphAdjList import *
 
 
 def align(graph1, graph2, a, b, lamb_da):
     sim_score = similarity_score(graph1, graph2, a, b)
-    P = 0
-    C1 = 0
-    L_inverse = [i for i in range]
+    P = 0 # unused variable!?!
 
     # vertices list of graph1 and graph2
-    V1 = graph1.vertex
-    V2 = graph2.vertex
+    V1 = graph1['vertex']
+    V2 = graph2['vertex']
     # size of V1 and V2
     n_v1 = len(V1)
     n_v2 = len(V2)
@@ -32,16 +31,21 @@ def align(graph1, graph2, a, b, lamb_da):
     for i in V1:
         for j in V2:
             
-            neighbor_i = graph1.adjacency[i]
-            neighbor_j = graph1.adjacency[j]
+            # neighbor_i = graph1.adjacency[i]
+            neighbor_i = neighbors(graph1, i)
+            # neighbor_j = graph1.adjacency[j]
+            neighbor_j = neighbors(graph2, j)
 
-            temp = [1/len(graph1.adjacency[i_prime]) for i_prime in neighbor_i]
-            temp2 = [1/len(graph2.adjacency[j_prime]) for j_prime in neighbor_j]
+            neighbor_i = set(neighbor_i)
+            neighbor_j = set(neighbor_j)
 
-            temp3 = [len(graph1.adjacency[i_prime]) for i_prime in neighbor_i]
-            temp4 = [len(graph2.adjacency[j_prime]) for j_prime in neighbor_j]
+            temp = [1/len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
+            temp2 = [1/len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
 
-            I[i][j] = min(temp, temp2)/max(temp3, temp4)
+            temp3 = [len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
+            temp4 = [len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
+
+            I[i][j] = min(sum(temp),sum(temp2))/max(temp3, temp4)
             A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
 
     for n in V1:
@@ -52,8 +56,8 @@ def align(graph1, graph2, a, b, lamb_da):
         i_prime = index // n_v2
         j_prime = index % n_v2
 
-        Al[i] = j
-        L = L.remove((i_prime, j_prime))
+        Al[i_prime] = j_prime
+        L_inverse = L_inverse.remove(i_prime, j_prime)
 
         # start of Haoming's
         for i_p in graph1.adjacency[i]:
@@ -68,9 +72,25 @@ def align(graph1, graph2, a, b, lamb_da):
                 D[i_p][j_p] = D[i_p][j_p] + 1
         # end of Haoming's
         # question: where did 'i' and 'j' come from?
-
-
     
+        temp_set = neighbor_i.intersection(L_inverse)
+        temp_set_2 = neighbor_j - L_inverse
+        
+
+        Q = [(i_prime,j_prime) for i_prime in temp_set for j_prime in temp_set_2]
+        # what if they don't have the same number of nodes??
+        
+        for i in V1:
+            for j in V2:
+                if (i,j) not in Q:
+                    temp = [1/len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
+                    temp2 = [1/len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
+
+                    temp3 = [len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
+                    temp4 = [len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
+
+                    I[i][j] = min(sum(temp) - C1[i], sum(temp2) - C2[j])/max(temp3, temp4) + D[i][j]
+                    A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
 
 def compute_score(graph1, graph2, i ,j , M):
     
