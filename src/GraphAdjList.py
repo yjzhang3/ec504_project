@@ -151,6 +151,7 @@ def make_graph(file_location1, file_location2):
             protein_map1[protein2] = count
             add_vertex(graph1, count)
             count += 1
+        graph1['max_id'] = count - 1
         # Add each edge into graph for adj list
         add_edge(graph1, protein_map1[protein1], protein_map1[protein2], score)
 
@@ -190,6 +191,7 @@ def make_graph(file_location1, file_location2):
                 add_vertex(graph2, count)
                 protein_map2[proteinB] = count
                 count += 1
+        graph2['max_id'] = count - 1
         add_edge(graph2, protein_map2[proteinA], protein_map2[proteinB], score_2)
 
 

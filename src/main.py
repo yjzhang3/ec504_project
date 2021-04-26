@@ -16,6 +16,7 @@ lamb_da = 1
 
 # called the alignment function
 result = align(graph1, graph2, a, b, lamb_da):
+### result is a dictionary, {id_in_graph1 : id_in_graph2}, basically a bunch of matching between i,j
 
 ### TO DO:
 ### calculate the performance score, using alignment
