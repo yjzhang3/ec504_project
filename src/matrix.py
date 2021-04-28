@@ -26,9 +26,9 @@ def align(graph1, graph2, a, b, lamb_da):
 
     # this is all i-j pair minus L
     L_inverse = [(i,j) for i in range(n_v1) for j in range(n_v2)]
-    L_inverse = set(L_inverse)
+    # L_inverse = set(L_inverse)
     # the output
-    Al = {}
+    Al = []
     
     print("Align: calculating first matrix A")
     for i in V1:
@@ -45,20 +45,24 @@ def align(graph1, graph2, a, b, lamb_da):
             temp3 = [len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
             temp4 = [len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
 
-            I[i][j] = min(sum(temp),sum(temp2))/max(temp3, temp4)
+            I[i][j] = min(sum(temp),sum(temp2))/max(max(temp3), max(temp4))
             A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
 
     print("Align: done calculating first matrix A")
     for n in V1:
-
-        A_list = [A[i][j] for i,j in L_inverse]
-        max_A = max(A_list)
-        index = A_list.index(max_A)
-        i = index // n_v2
-        j = index % n_v2
-
-        Al[i] = j
-        # L_inverse = L_inverse.remove(i, j)
+        print('n = ', n)
+        print('A = ', A)
+        print('L_inverse = ', L_inverse)
+        A_list = [(A[i][j], (i,j)) for i,j in L_inverse]
+        max_A = max(A_list, key = lambda i : i[0])
+        # index = A_list.index(max_A)
+        # i = index // n_v2
+        # j = index % n_v2
+        (i, j) = max_A[1]
+        print('(i, j) ', (i, j))
+        Al.append((i, j))
+        L_inverse.remove((i, j))
+        # print('L_inverse = ', L_inverse)
         # L_inverse = set(L_inverse)
  
         # start of Haoming's
@@ -109,14 +113,29 @@ def align(graph1, graph2, a, b, lamb_da):
                 neighbor_i = neighbors(graph1, i)
                 neighbor_j = neighbors(graph2, j)
 
+                ### sum before subtract C
                 temp = [1/len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
                 temp2 = [1/len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
 
                 temp3 = [len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
                 temp4 = [len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
 
-                I[i][j] = min(sum(temp) - C1[i], sum(temp2) - C2[j])/max(temp3, temp4) + D[i][j]
+                I[i][j] = min(sum(temp) - C1[i], sum(temp2) - C2[j])/max(max(temp3), max(temp4)) + D[i][j]
+
+                ### subtract C before sum
+                # temp = [1/len(neighbors(graph1, i_prime)- C1[i]) for i_prime in neighbor_i]
+                # temp2 = [1/len(neighbors(graph2, j_prime) - C2[j]) for j_prime in neighbor_j]
+
+                # temp3 = [len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
+                # temp4 = [len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
+
+                # I[i][j] = min(sum(temp), sum(temp2))/max(max(temp3), max(temp4)) + D[i][j]
+
                 A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
+
+        ### tried again
+
+    return Al
 
 def compute_score(graph1, graph2, i ,j , M):
 
@@ -125,8 +144,10 @@ def compute_score(graph1, graph2, i ,j , M):
     neighbor_i = neighbors(graph1, i) # list of i_prime
     neighbor_j = neighbors(graph2, j) # list of j_prime
 
-    # print('neighbor_i', neighbor_i)
-    # print('neighbor_j', neighbor_j)
+    # print('i = ', i)
+    # print('j = ', j)
+    # print('neighbor_i ', len(neighbor_i))
+    # print('neighbor_j ', len(neighbor_j))
     temp = []
     for i_prime in neighbor_i:
         # get all edges from i_prime to j_prime
@@ -159,17 +180,20 @@ def topological_score(graph1, graph2):
     n_v2 = graph2['max_id'] + 1
 
     T = np.ones((n_v1, n_v2))
+    print('T ', T)
     T_prime = np.ones((n_v1, n_v2))
-    max_round = 100
+    max_round = 10
 
     V1 = graph1['vertex']
     V2 = graph2['vertex']
     for t in range(1, max_round):
+        print('topological_score: iter ', t)
         for i in V1:
             for j in V2:
                 T_prime[i, j] = compute_score(graph1, graph2, i , j, T)
         
         T = T_prime
+        print('T ', T)
     return T
 
 def biological_score(graph1, graph2, b):
@@ -179,7 +203,8 @@ def biological_score(graph1, graph2, b):
     n_v2 = graph2['max_id'] + 1
 
     # a n_v1 x n_v2 matrix
-    C = np.eye((n_v1, n_v2)) # not sure how to compute this?
+    C = np.eye(n_v1, n_v2) # not sure how to compute this?
+    print('C ', C)
     # should be num_node_1*num_node_2 matrix
     # temporarily initialize as diaginal of '1'
 
@@ -189,20 +214,22 @@ def biological_score(graph1, graph2, b):
     V1 = graph1['vertex']
     V2 = graph2['vertex']
     
-    max_round = 100 #tunable
+    max_round = 10 #tunable
     for t in range(1,max_round):
         for i in V1:
             for j in V2:
-                s = ComputeScore(graph1,graph2,i,j,B) # does this give a single number?
+                s = compute_score(graph1,graph2,i,j,B) # does this give a single number?
                 B_prime[i,j] = b*C[i,j] + (1-b)*s
                     
         B = B_prime
-    
+
+    print('biological_score: done')
     return B # typo in the PDF? It said T
 
 
 
 def similarity_score(graph1, graph2, a, b):
+    print('similarity_score: start')
     # num_node_1 = no. of vertex in graph1
     # num_node_2 = no. of vertex in graph2
     n_v1 = graph1['max_id'] + 1
@@ -212,7 +239,7 @@ def similarity_score(graph1, graph2, a, b):
     # Similarity score matrix S with forumla rows and forumla columns, indicates the similarity between nodes of two networks
     
     T = topological_score(graph1,graph2)
-    B = biological_score(graph1,graph2)
+    B = biological_score(graph1, graph2, b)
     # both T and B are matrices
     
     
@@ -225,5 +252,6 @@ def similarity_score(graph1, graph2, a, b):
         for j in V2:
             S[i,j] = a * T[i,j] + (1-a) * B[i,j]
     
+    print('similarity_score: done')
     return S
         

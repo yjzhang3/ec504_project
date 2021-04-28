@@ -1,0 +1,6 @@
+protein1 protein2 combined_score
+0 1 10
+1 2 10
+2 3 10
+3 4 10
+4 5 10

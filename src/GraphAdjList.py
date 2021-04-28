@@ -65,7 +65,9 @@ def add_edge(graph1, v_start, v_end, score):
     # to both start and end vertex
     else:
         temp = [v_end, score]
+        temp2 = [v_start, score]
         graph1[v_start].append(temp)
+        graph1[v_end].append(temp2)
 
 def print_graph1():
     # print adj list into a text file as output
