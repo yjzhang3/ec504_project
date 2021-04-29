@@ -159,13 +159,13 @@ def topological_score(graph1, graph2):
     V1 = graph1['vertex']
     V2 = graph2['vertex']
     for t in range(1, max_round):
-        print('topological_score: iter ', t)
+        # print('topological_score: iter ', t)
         for i in V1:
             for j in V2:
                 start_time = time.time()
-                print('topological_score: (i, j) ', i, ' ', j)
+                # print('topological_score: (i, j) ', i, ' ', j)
                 T_prime[i, j] = compute_score(graph1, graph2, i , j, T)
-                print("--- %s seconds ---" % (time.time() - start_time))
+                # print("--- %s seconds ---" % (time.time() - start_time))
         
         T = T_prime
     print('topological_score: done')

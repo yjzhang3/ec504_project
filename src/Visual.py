@@ -47,6 +47,7 @@ def print_network(file1_location, file2_location):
 
     plt.subplot(122)
     nx.draw_networkx(G2)
+    plt.savefig('./graph.png', format="PNG")
     plt.show()
 
 if __name__ == "__main__":
