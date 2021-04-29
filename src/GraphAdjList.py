@@ -68,6 +68,7 @@ def add_edge(graph1, v_start, v_end, score):
         temp2 = [v_start, score]
         graph1[v_start].append(temp)
         graph1[v_end].append(temp2)
+        graph1['edges'].append((v_start, v_end))
 
 def print_graph1():
     # print adj list into a text file as output
@@ -135,7 +136,7 @@ def make_graph(file_location1, file_location2):
     protein_map1 = {} # a map that maps protein id to numbers
     graph1 = {}
     graph1['vertex'] = []
-
+    graph1['edges'] = []
     
     for line in fileget_1:
         # Add score between vertcies by specifying
@@ -164,7 +165,7 @@ def make_graph(file_location1, file_location2):
     # Main driver code
     graph2 = {}
     graph2['vertex'] = []
-
+    graph2['edges'] = []
     # Store vertices in vertices_list
     vertices_list = 0
     count = 0

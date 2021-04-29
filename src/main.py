@@ -2,10 +2,15 @@ import sys
 
 from GraphAdjList import *
 from matrix import *
-
+from Visual import print_network
+from scoring_func import edgeCorr
 ### default file location
 file1_location = "./data/set3_a.txt"
 file2_location = "./data/set3_b.txt"
+
+# the location of the file, relative to where we compile the program
+# file1_location = "./data/4932.protein.physical.links.v11.0.txt"
+# file2_location = "./data/9606.protein.physical.links.v11.0.txt"
 
 if len(sys.argv) > 1:
     if sys.argv[1] == 's':
@@ -22,17 +27,20 @@ if len(sys.argv) > 1:
         print('command ', sys.argv[1], 'is not recogized')
         exit(1)
 
-# the location of the file, relative to where we compile the program
-# file1_location = "./data/9606_protein.txt"
-# file2_location = "./data/9606_protein.txt"
+
 
 print("loading graph1 from: ", file1_location)
 print("loading graph2 from: ", file2_location)
+
+
 
 # making grpah1 and graph2, reading information from the provided file
 graph1, graph2, map1, map2 = make_graph(file1_location, file2_location)
 print("Making graph: done")
 
+
+print("graph1: ", (graph1['max_id'] + 1), " vertices")
+print("graph2: ", (graph2['max_id'] + 1), " vertices")
 # a, b, lambda should be between 0 and 1
 a = 1
 b = 0 # we don't use biological data for this testing
@@ -50,10 +58,14 @@ inv_map1 = {v: k for k, v in map1.items()}
 inv_map2 = {v: k for k, v in map2.items()}
 
 ### remapped the id to the protein name
-mapped_result = [(inv_map1[i], inv_map2[j]) for (i,j) in result]
+# mapped_result = [(inv_map1[i], inv_map2[j]) for (i,j) in result]
+mapped_result = [(inv_map1[i], inv_map2[j]) for (i,j) in result.items()]
 print('Result:')
 print(mapped_result)
 
+edgeCorr(result, graph1, graph2)
+
+print_network(file1_location, file2_location)
 
 ### save result into .json file
 ### which the frontend will read later

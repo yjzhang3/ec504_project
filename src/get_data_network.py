@@ -31,7 +31,9 @@ interactions = df[['preferredName_A', 'preferredName_B', 'score']]
 
 G=nx.Graph(name='Protein Interaction Graph')
 interactions = np.array(interactions)
+
 for i in range(len(interactions)):
+    
     interaction = interactions[i]
     a = interaction[0] # protein a node
     b = interaction[1] # protein b node

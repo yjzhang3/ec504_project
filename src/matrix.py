@@ -1,6 +1,6 @@
 import numpy as np
 from GraphAdjList import *
-
+import time
 
 def align(graph1, graph2, a, b, lamb_da):
     sim_score = similarity_score(graph1, graph2, a, b)
@@ -27,7 +27,8 @@ def align(graph1, graph2, a, b, lamb_da):
     L_j = V2.copy()
 
     # the output
-    Al = []
+    # Al = []
+    Al = {}
     
     print("Align: calculating first matrix A")
     for i in V1:
@@ -54,8 +55,9 @@ def align(graph1, graph2, a, b, lamb_da):
         max_A = max(A_list, key = lambda i : i[0])
         ### greedy: select i,j pairing with best score
         (i, j) = max_A[1]
-        ### sace it into input
-        Al.append((i, j))
+        ### save it into output
+        # Al.append((i, j))
+        Al[i] = j
         ### don't consider i,j we already select
         L_i.remove(i)
         L_j.remove(j)
@@ -157,10 +159,13 @@ def topological_score(graph1, graph2):
     V1 = graph1['vertex']
     V2 = graph2['vertex']
     for t in range(1, max_round):
-        # print('topological_score: iter ', t)
+        print('topological_score: iter ', t)
         for i in V1:
             for j in V2:
+                start_time = time.time()
+                print('topological_score: (i, j) ', i, ' ', j)
                 T_prime[i, j] = compute_score(graph1, graph2, i , j, T)
+                print("--- %s seconds ---" % (time.time() - start_time))
         
         T = T_prime
     print('topological_score: done')
