@@ -63,8 +63,8 @@ mapped_result = [(inv_map1[i], inv_map2[j]) for (i,j) in result.items()]
 print('Result:')
 print(mapped_result)
 
-edgeCorr(result, graph1, graph2)
-
+EC_score = edgeCorr(result, graph1, graph2)
+print("edge correctness = ", EC_score)
 print_network(file1_location, file2_location)
 
 ### save result into .json file
