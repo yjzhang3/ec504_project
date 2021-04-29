@@ -115,6 +115,9 @@ def print_graph2():
         for edges in graph2[vertex]:
             print (vertex, " -> ", edges[0], " edge weight: ", edges[1], file = sample)
 
+def test_func_2():
+    print("hello")
+
 def neighbors(graph1, index):
     neighbors_list = []
     for edges in graph1[index]:
@@ -167,27 +170,37 @@ def make_graph(file_location1, file_location2):
 
     # Store vertices in vertices_list
     vertices_list = 0
-    count = 0
+
     protein_map2 = {} # a map that maps protein id to numbers
 
     for each in fileget_2:
         proteinA, proteinB, score_2 = each.strip().split()
         # protein not already exist, create vertex 
         if (proteinA not in protein_map2):
-            
-            add_vertex(graph2, count)
-            protein_map2[proteinA] = count
-            count += 1
+            # Making sure the map has unique proteins, no repetitive
+            if (proteinA in protein_map1): 
+                num = protein_map1[proteinA]
+                protein_map2[proteinA] = num
+                add_vertex(graph2, num)
+            else:
+                add_vertex(graph2, count)
+                protein_map2[proteinA] = count
+                count += 1
         if (proteinB not in protein_map2):
-            
-            add_vertex(graph2, count)
-            protein_map2[proteinB] = count
-            count += 1
+            # Making sure the map has unique proteins, no repetitive
+            if (proteinB in protein_map1):
+                num = protein_map1[proteinB]
+                protein_map2[proteinB] = num
+                add_vertex(graph2, num)
+            else:
+                add_vertex(graph2, count)
+                protein_map2[proteinB] = count
+                count += 1
         graph2['max_id'] = count - 1
         add_edge(graph2, protein_map2[proteinA], protein_map2[proteinB], score_2)
 
 
-    return graph1, graph2, protein_map1, protein_map2
+    return graph1, graph2
 
 if __name__ == "__main__":
 

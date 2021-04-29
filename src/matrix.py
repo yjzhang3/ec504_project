@@ -9,24 +9,23 @@ def align(graph1, graph2, a, b, lamb_da):
     # vertices list of graph1 and graph2
     V1 = graph1['vertex']
     V2 = graph2['vertex']
-    print('V1 = ', V1)
-    print('V2 = ', V2)
+
     # size of V1 and V2
-    n_v1 = graph1['max_id'] + 1
-    n_v2 = graph2['max_id'] + 1
+    n_v1 = len(V1)
+    n_v2 = len(V2)
 
     # initialize matrix I and A
     I = np.zeros((n_v1, n_v2))
     A = np.zeros((n_v1, n_v2))
 
-    P = 0
     # 1-d matrix
     C1 = np.zeros(n_v1)
     C2 = np.zeros(n_v2)
 
-    # this is all i-j pair minus L
-    L_inverse = [(i,j) for i in range(n_v1) for j in range(n_v2)]
-    # L_inverse = set(L_inverse)
+    # list of vertices not already selected
+    L_i = V1.copy()
+    L_j = V2.copy()
+
     # the output
     Al = []
     
@@ -50,20 +49,16 @@ def align(graph1, graph2, a, b, lamb_da):
 
     print("Align: done calculating first matrix A")
     for n in V1:
-        print('n = ', n)
-        print('A = ', A)
-        print('L_inverse = ', L_inverse)
-        A_list = [(A[i][j], (i,j)) for i,j in L_inverse]
+
+        A_list = [(A[i][j], (i,j)) for i in L_i for j in L_j]
         max_A = max(A_list, key = lambda i : i[0])
-        # index = A_list.index(max_A)
-        # i = index // n_v2
-        # j = index % n_v2
+        ### greedy: select i,j pairing with best score
         (i, j) = max_A[1]
-        print('(i, j) ', (i, j))
+        ### sace it into input
         Al.append((i, j))
-        L_inverse.remove((i, j))
-        # print('L_inverse = ', L_inverse)
-        # L_inverse = set(L_inverse)
+        ### don't consider i,j we already select
+        L_i.remove(i)
+        L_j.remove(j)
  
         # start of Haoming's
         neighbor_i = neighbors(graph1, i)
@@ -82,15 +77,11 @@ def align(graph1, graph2, a, b, lamb_da):
             for j_prime in neighbor_j:
                 D[i_prime][j_prime] = D[i_prime][j_prime] + 1
         # end of Haoming's
-        # question: where did 'i' and 'j' come from?
     
+        ### unused code, unable to verify the meaning from pseudo-code
         # temp_set = neighbor_i.intersection(L_inverse)
         # temp_set_2 = neighbor_j - L_inverse
-        
-
         # Q = [(i_prime,j_prime) for i_prime in temp_set for j_prime in temp_set_2]
-
-        # what if they don't have the same number of nodes??
         
         # for i in V1:
         #     for j in V2:
@@ -104,12 +95,10 @@ def align(graph1, graph2, a, b, lamb_da):
         #             I[i][j] = min(sum(temp) - C1[i], sum(temp2) - C2[j])/max(temp3, temp4) + D[i][j]
         #             A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
 
-        ### tried this one
+        ### tried this one instead
         for i in V1:
             for j in V2:
                 
-                # neighbor_i = graph1.adjacency[i]
-                # neighbor_j = graph1.adjacency[j]
                 neighbor_i = neighbors(graph1, i)
                 neighbor_j = neighbors(graph2, j)
 
@@ -121,20 +110,8 @@ def align(graph1, graph2, a, b, lamb_da):
                 temp4 = [len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
 
                 I[i][j] = min(sum(temp) - C1[i], sum(temp2) - C2[j])/max(max(temp3), max(temp4)) + D[i][j]
-
-                ### subtract C before sum
-                # temp = [1/len(neighbors(graph1, i_prime)- C1[i]) for i_prime in neighbor_i]
-                # temp2 = [1/len(neighbors(graph2, j_prime) - C2[j]) for j_prime in neighbor_j]
-
-                # temp3 = [len(neighbors(graph1, i_prime)) for i_prime in neighbor_i]
-                # temp4 = [len(neighbors(graph2, j_prime)) for j_prime in neighbor_j]
-
-                # I[i][j] = min(sum(temp), sum(temp2))/max(max(temp3), max(temp4)) + D[i][j]
-
                 A[i][j] = lamb_da*sim_score[i][j] + (1 - lamb_da)*I[i][j]
-
-        ### tried again
-
+                
     return Al
 
 def compute_score(graph1, graph2, i ,j , M):
@@ -144,18 +121,12 @@ def compute_score(graph1, graph2, i ,j , M):
     neighbor_i = neighbors(graph1, i) # list of i_prime
     neighbor_j = neighbors(graph2, j) # list of j_prime
 
-    # print('i = ', i)
-    # print('j = ', j)
-    # print('neighbor_i ', len(neighbor_i))
-    # print('neighbor_j ', len(neighbor_j))
     temp = []
     for i_prime in neighbor_i:
         # get all edges from i_prime to j_prime
         weight_list = [M[i_prime][j_prime] for j_prime in neighbor_j]
         neighbor_list = [(M[i_prime][j_prime], j_prime) for j_prime in neighbor_j]
 
-        # print('len weight_list = ', len(weight_list))
-        # print(neighbor_list)
         # find index of max edge
         max_weight = max(weight_list)
         index = weight_list.index(max_weight)
@@ -180,20 +151,19 @@ def topological_score(graph1, graph2):
     n_v2 = graph2['max_id'] + 1
 
     T = np.ones((n_v1, n_v2))
-    print('T ', T)
     T_prime = np.ones((n_v1, n_v2))
     max_round = 10
 
     V1 = graph1['vertex']
     V2 = graph2['vertex']
     for t in range(1, max_round):
-        print('topological_score: iter ', t)
+        # print('topological_score: iter ', t)
         for i in V1:
             for j in V2:
                 T_prime[i, j] = compute_score(graph1, graph2, i , j, T)
         
         T = T_prime
-        print('T ', T)
+    print('topological_score: done')
     return T
 
 def biological_score(graph1, graph2, b):
@@ -204,7 +174,6 @@ def biological_score(graph1, graph2, b):
 
     # a n_v1 x n_v2 matrix
     C = np.eye(n_v1, n_v2) # not sure how to compute this?
-    print('C ', C)
     # should be num_node_1*num_node_2 matrix
     # temporarily initialize as diaginal of '1'
 
