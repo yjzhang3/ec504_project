@@ -1,4 +1,5 @@
 import sys
+import time
 
 from GraphAdjList import *
 from matrix import *
@@ -47,7 +48,9 @@ b = 0 # we don't use biological data for this testing
 lamb_da = 0.5
 
 ### called the alignment function
+start_time = time.time()
 result = align(graph1, graph2, a, b, lamb_da)
+print("Align time --- %s seconds ---" % (time.time() - start_time))
 ### result is a list of tuple, (id_in_graph1, id_in_graph2), basically a bunch of matching between i,j
 
 ### TO DO:

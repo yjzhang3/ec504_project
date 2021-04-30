@@ -213,7 +213,8 @@ def similarity_score(graph1, graph2, a, b):
     # Similarity score matrix S with forumla rows and forumla columns, indicates the similarity between nodes of two networks
     
     T = topological_score(graph1,graph2)
-    B = biological_score(graph1, graph2, b)
+    ### we don't use this score for this paper
+    # B = biological_score(graph1, graph2, b)
     # both T and B are matrices
     
     
@@ -224,7 +225,8 @@ def similarity_score(graph1, graph2, a, b):
 
     for i in V1:
         for j in V2:
-            S[i,j] = a * T[i,j] + (1-a) * B[i,j]
+            # S[i,j] = a * T[i,j] + (1-a) * B[i,j]
+            S[i,j] = T[i,j]
     
     print('similarity_score: done')
     return S

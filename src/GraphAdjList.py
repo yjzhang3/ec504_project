@@ -139,6 +139,9 @@ def make_graph(file_location1, file_location2):
     graph1['edges'] = []
     
     for line in fileget_1:
+        # skip null character
+        if line.strip() == '\x00':
+            continue
         # Add score between vertcies by specifying
         # Start vertex, End vertex, Score <--- Fromat
         protein1, protein2, score = line.strip().split()
@@ -172,6 +175,9 @@ def make_graph(file_location1, file_location2):
     protein_map2 = {} # a map that maps protein id to numbers
 
     for each in fileget_2:
+        # skip null character
+        if each.strip() == '\x00':
+            continue
         proteinA, proteinB, score_2 = each.strip().split()
         # protein not already exist, create vertex 
         if (proteinA not in protein_map2):
