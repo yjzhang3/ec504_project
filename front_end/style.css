@@ -1,0 +1,22 @@
+.btn {
+  float: right;
+}
+
+.row {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.navbar-brand {
+  padding-left: 30px;
+}
+
+img {
+  width: 50%;
+  margin: auto;
+  display: block;
+}
+
+#score {
+  text-align: center;
+}
