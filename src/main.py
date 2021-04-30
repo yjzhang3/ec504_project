@@ -51,7 +51,7 @@ lamb_da = 0.5
 start_time = time.time()
 result = align(graph1, graph2, a, b, lamb_da)
 print("Align time --- %s seconds ---" % (time.time() - start_time))
-### result is a list of tuple, (id_in_graph1, id_in_graph2), basically a bunch of matching between i,j
+### result is a dictionary, {id_in_graph1, id_in_graph2}, basically a bunch of matching between i,j
 
 ### TO DO:
 ### calculate the performance score, using alignment
@@ -68,7 +68,7 @@ print(mapped_result)
 
 EC_score = edgeCorr(result, graph1, graph2)
 print("edge correctness = ", EC_score)
-print_network(file1_location, file2_location)
+print_network(file1_location, file2_location, mapped_result)
 
 ### save result into .json file
 ### which the frontend will read later

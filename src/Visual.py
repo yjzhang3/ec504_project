@@ -16,7 +16,7 @@ from matplotlib import cm
 ############################################ End of Instructions ###############################################
 
 
-def print_network(file1_location, file2_location):
+def print_network(file1_location, file2_location, al):
     fileget_1 = open (file1_location, 'r')
     next(fileget_1) # ignoring the first line of input
     G = nx.Graph(name='Protein Interaction Graph') 
@@ -31,7 +31,12 @@ def print_network(file1_location, file2_location):
     
     plt.figure(figsize=(11,11),facecolor=[0.7,0.7,0.7,0.4])
     plt.subplot(121)
-    nx.draw_networkx(G)
+    nx.draw_networkx(G, node_color='green')
+
+    match_pair = [j for (i,j) in al]
+    # for (i,j) in al:
+    color_map = []
+
 
     fileget_2 = open (file2_location, 'r')
     next(fileget_2) # ignoring the first line of input
@@ -41,12 +46,27 @@ def print_network(file1_location, file2_location):
         # Add score between vertcies by specifying
         # Start vertex, End vertex, Score <--- Fromat
         protein1, protein2, score = line.strip().split()
+        # if(protein1 in match_pair):
+        #     color_map.append('green')
+        # else:
+        #     color_map.append('blue') 
+        # if(protein2 in match_pair):
+        #     color_map.append('green')
+        # else:
+        #     color_map.append('blue') 
+
         G2.add_edge(protein1, protein2) # add weighted edge to graph
+
+    for node in G2:
+        if node in match_pair:
+            color_map.append('green')
+        else: 
+            color_map.append('blue')  
 
     pos = nx.spring_layout(G2) # position the nodes using the spring layout
 
     plt.subplot(122)
-    nx.draw_networkx(G2)
+    nx.draw_networkx(G2, node_color=color_map)
     plt.savefig('./graph.png', format="PNG")
     plt.show()
 
