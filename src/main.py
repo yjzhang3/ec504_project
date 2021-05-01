@@ -74,11 +74,13 @@ data['result'] = mapped_result
 data['edge correctness'] = EC_score
 data['LCCS'] = largest_cc
 data['LCCS_len'] = len(largest_cc)
-### save result into .json file
-### change 'data' to the filename we want
-with open('result/data.json', 'w') as fp:
-    json.dump(data, fp)
 
+### change 'data' to the filename we want
+save_location = 'result/data.json'
+print('Saving result to ', save_location)
+### save result into .json file
+with open(save_location, 'w') as fp:
+    json.dump(data, fp)
 
 ### print the 2 compared graph, with color coded
 print_network(file1_location, file2_location, mapped_result)
