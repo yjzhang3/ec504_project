@@ -2,10 +2,8 @@
 This project aims to implement a novel graph alignment algorithm called NETAL that aligns protein-protein interaction networks (PPIN) of small sample size that mimics bigger sample size of different species. In order to provide evidence that the algorithm is applicable to study possible evolutionary relationships, we computed the global alignment between several artificially generated PPINs smaller in size. A greedy approach then evaluated the alignment performance based on edge correctness and largest common connected components. The validation of the implementation using smaller graphs shows the promising results in terms of performance and robustness. A visual website also validates the results of alignment. 
 
 ## Instructions for Running the Code:
-SCC-file location: /projectnb/ec504/ronrat/proj
-If run from within SCC, make sure to load python3 module ‘module load python3’
-
-All the commands are run from /projectnb/ec504/ronrat/proj directory. There’s 3 ways to run the code.
+Note: download 'module load python3'
+There’s 3 ways to run the code.
 1. Running without command line argument. 
     - python ./src/main.py
     - This will use a default file location, hard-coded in main.py
@@ -18,10 +16,6 @@ All the commands are run from /projectnb/ec504/ronrat/proj directory. There’s 
     - python ./src/main.py i ./data/set3_a.txt ./data/set3_b.txt
     - This will take 2 additional command line arguments, which is 2 file location
     - Note: the 1st graph have to be smaller (has less vertices) than 2nd graph
-
-## Instruction for Running Front End:
-
-
 
 ## References:
 [1]https://academic.oup.com/bioinformatics/article/29/13/1654/185807#92200279   
