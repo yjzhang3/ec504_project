@@ -1,6 +1,9 @@
 # NETAL on Protein Protein Interaction Networks
 This project aims to implement a novel graph alignment algorithm called NETAL that aligns protein-protein interaction networks (PPIN) of small sample size that mimics bigger sample size of different species. In order to provide evidence that the algorithm is applicable to study possible evolutionary relationships, we computed the global alignment between several artificially generated PPINs smaller in size. A greedy approach then evaluated the alignment performance based on edge correctness and largest common connected components. The validation of the implementation using smaller graphs shows the promising results in terms of performance and robustness. A visual website also validates the results of alignment. 
 
+## authors:
+Yujia, Mandy, Ron, and Haoming for EC504 Advanced Data Structure.
+
 ## Instructions for Running the Code:
 Note: download 'module load python3'
 There’s 3 ways to run the code.
